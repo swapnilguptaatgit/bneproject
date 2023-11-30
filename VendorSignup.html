@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendors Login-Signup</title>
+    <link rel="stylesheet" href="css/formst.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon_io BNE fin/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon_io BNE fin/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon_io BNE fin/favicon-16x16.png">
+</head>
+<body style="background-image: url(images/bg3blur.jpg); background-repeat: no-repeat; background-size: cover;">
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form>
+			<h1>Create Account</h1>
+            <br><br>
+			<input type="text" placeholder="Name" id="Name" required />
+			<input type="email" placeholder="Email" id="email" required/>
+			<input type="password" placeholder="Password" id="password" minlength="8"/>
+            <input type="number" placeholder="Contact Number" id="contact_number" minlength="10" maxlength="10" required>
+            <input type="text" placeholder="GST Invoice" id="gst_invoice" minlength="15" maxlength="15" required />
+            <input type="text" placeholder="Shop Address" id="shop_address" required /><br>
+			<button onclick="signupvendor(event)">Sign Up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form>
+            <h3>Vendor</h3>
+			<h1>Sign in</h1>
+			<br><br>
+			<input type="Email" placeholder="Email" id="Email" required/>
+			<input type="Password" placeholder="Password" id="Password" required />
+            <br>
+			<button onclick="signinvendor(event)">Sign In</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signin">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signup">Sign Up</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+ async function signupvendor(event) {
+	event.preventDefault();
+        try {
+            const name = document.getElementById('Name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const contact_number = document.getElementById('contact_number').value;
+            const gst_invoice = document.getElementById('gst_invoice').value;
+            const shop_address = document.getElementById('shop_address').value;
+
+            const response = await fetch('/api/vendorauth/CreateVendor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password, contact_number, gst_invoice, shop_address }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('You have successfully created your account');
+                window.location.replace('./vendorbid.html');
+            } else {
+                alert('Signup failed. Please check your input.');
+            }
+        } catch (error) {
+            console.error('Error during Signup', error);
+        }
+    }
+	async function signinvendor(event) {
+		event.preventDefault();
+        const email = document.getElementById('Email').value;
+        const password = document.getElementById('Password').value;
+
+        if (!email || !password) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/vendorauth/LoginVendor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('You are successfully SignIn');
+                
+                    window.location.href = 'http://127.0.0.1:5501/vendorbid.html';
+                
+            } else {
+                alert('Please write the correct credentials');
+            }
+        } catch (error) {
+            console.error('Error during Signin', error);
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const signUpButton = document.getElementById('signup');
+        const signInButton = document.getElementById('signin');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', function () {
+            container.classList.add("right-panel-active");
+            signupvendor(); // Now accessible globally
+        });
+		signInButton.addEventListener('click', function () {
+            container.classList.remove("right-panel-active");
+            signinvendor();
+        });
+  
+});
+</script>
+</body>
+</html>

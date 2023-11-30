@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login-Signup</title>
+    <link rel="stylesheet" href="css/formst.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon_io BNE fin/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon_io BNE fin/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon_io BNE fin/favicon-16x16.png">
+</head>
+<body style="background-image: url(images/bg8\ blur.jpg); background-repeat: no-repeat; background-size: cover;">
+<div class="container" id="container">
+	<div class="form-container sign-up-container">
+		<form>
+			<h1>Create Account</h1>
+            <br><br>
+			<input type="text" placeholder="Name" id="name" required />
+			<input type="email" placeholder="Email" id="email" required/>
+			<input type="password" placeholder="Password" id="password" required minlength="8"/>
+            <input type="number" placeholder="Contact Number" id="phone_num" minlength="10" maxlength="10" required>
+            <input type="text" placeholder="Address" id="address" /><br>
+			<button onclick="Signupcustomer(event)">Sign Up</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form>
+			<h3>Customer</h3>
+			<h1>Sign in</h1>
+			<br><br>
+			<input type="email" placeholder="Email" id="Email" />
+			<input type="password" placeholder="Password" id="Password" />
+            <br>
+			<button onclick="Signincustomer(event)">Sign In</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<h1>Welcome Back!</h1>
+				<p>To keep connected with us please login with your personal info</p>
+				<button class="ghost" id="signIn">Sign In</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Hello, Friend!</h1>
+				<p>Enter your personal details and start journey with us</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+<script> 
+
+
+	async function Signupcustomer(event){
+		event.preventDefault();
+		const name=document.getElementById('name').value
+		const email = document.getElementById('email').value;
+		const password = document.getElementById('password').value;
+		const phone_num=document.getElementById('phone_num').value
+		const address=document.getElementById('address').value
+		try {
+			const response = await fetch('/api/customerauth/CreateCustomer', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+			  },
+			  body: JSON.stringify({ name,email, password,phone_num,address }),
+			});
+		
+	
+		const data = await response.json();
+	
+		if (data.success) {
+			alert('You have successfully created your account');
+		 
+		  window.location.href ='http://127.0.0.1:5501/customerbid.html';
+		} else {
+		  // Authentication failed, display an error message
+		  alert('please write valid input for Signup');
+		 
+		}
+	  } catch (error) {
+		
+	  }
+	}
+	async function Signincustomer(event){
+		event.preventDefault();
+		
+		const email = document.getElementById('Email').value;
+		const password = document.getElementById('Password').value;
+		try {
+			const response = await fetch('/api/customerauth/Logincustomer', {
+			  method: 'POST',
+			  headers: {
+				'Content-Type': 'application/json',
+			  },
+			  body: JSON.stringify({email, password}),
+			});
+		
+	
+		const data = await response.json();
+	
+		if (data.success) {
+			alert('You are successfully SignIn');
+		  
+		  window.location.href ='http://127.0.0.1:5501/customerbid.html';
+		} else {
+		  // Authentication failed, display an error message
+		  alert('Please write the correct credentials');
+		 
+		}
+	  } catch (error) {
+		
+	  }
+	}
+	document.addEventListener('DOMContentLoaded', function () {
+	const signUpButton = document.getElementById('signUp');
+	const signInButton = document.getElementById('signIn');
+	const container = document.getElementById('container');
+	Signupcustomer();
+	Signincustomer();
+	signUpButton.addEventListener('click', () => {
+		container.classList.add("right-panel-active");
+	});
+	
+	signInButton.addEventListener('click', () => {
+		container.classList.remove("right-panel-active");
+	});
+});
+
+</script>
+</body>
+</html>
